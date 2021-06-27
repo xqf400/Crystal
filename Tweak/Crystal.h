@@ -2,7 +2,6 @@
 #import <Cephei/HBPreferences.h>
 
 HBPreferences* preferences = nil;
-
 BOOL enabled = NO;
 
 // volume control mode
@@ -20,6 +19,8 @@ NSString* outOfCallModeValue = @"2";
 BOOL musicControlSwitch = YES;
 NSString* playingModeValue = @"2";
 NSString* pausedModeValue = @"0";
+
+// miscellaneous
 BOOL pauseAtZeroVolumeSwitch = YES;
 
 @interface SBVolumeControl : NSObject

@@ -7,7 +7,7 @@
 @interface CSTAppearanceSettings : HBAppearanceSettings
 @end
 
-@interface CSTContributorsSubPrefsListController : HBListController
+@interface CSTContributorsSubPreferencesListController : HBListController
 @property(nonatomic, retain)CSTAppearanceSettings* appearanceSettings;
 @property(nonatomic, retain)UILabel* titleLabel;
 @property(nonatomic, retain)UIBlurEffect* blur;

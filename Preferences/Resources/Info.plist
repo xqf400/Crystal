@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
 	<key>CFBundleExecutable</key>
-	<string>CrystalPrefs</string>
+	<string>CrystalPreferences</string>
 	<key>CFBundleIdentifier</key>
 	<string>love.litten.crystalpreferences</string>
 	<key>CFBundleInfoDictionaryVersion</key>

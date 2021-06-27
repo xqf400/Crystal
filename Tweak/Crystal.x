@@ -8,14 +8,11 @@
 
 	%orig;
 
-	if (volumeModeControlSwitch && [self _effectiveVolume] >= [volumeThresholdValue doubleValue]) {
+	if ([self _effectiveVolume] >= [volumeThresholdValue doubleValue]) {
 		if ([volumeIncreaseModeValue intValue] == 0) [[[[[[%c(SBMediaController) sharedInstance] valueForKey:@"_routingController"] pickedRoute] logicalLeaderOutputDevice] valueForKey:@"_avOutputDevice"] setCurrentBluetoothListeningMode:@"AVOutputDeviceBluetoothListeningModeAudioTransparency"];
 		else if ([volumeIncreaseModeValue intValue] == 1) [[[[[[%c(SBMediaController) sharedInstance] valueForKey:@"_routingController"] pickedRoute] logicalLeaderOutputDevice] valueForKey:@"_avOutputDevice"] setCurrentBluetoothListeningMode:@"AVOutputDeviceBluetoothListeningModeNormal"];
 		else if ([volumeIncreaseModeValue intValue] == 2) [[[[[[%c(SBMediaController) sharedInstance] valueForKey:@"_routingController"] pickedRoute] logicalLeaderOutputDevice] valueForKey:@"_avOutputDevice"] setCurrentBluetoothListeningMode:@"AVOutputDeviceBluetoothListeningModeActiveNoiseCancellation"];
 	}
-
-	if (pauseAtZeroVolumeSwitch && [self _effectiveVolume] < 0.1 && [[%c(SBMediaController) sharedInstance] isPaused])
-		[[%c(SBMediaController) sharedInstance] playForEventSource:0];
 
 }
 
@@ -23,14 +20,11 @@
 
 	%orig;
 
-	if (volumeModeControlSwitch && [self _effectiveVolume] <= [volumeThresholdValue doubleValue]) {
+	if ([self _effectiveVolume] <= [volumeThresholdValue doubleValue]) {
 		if ([volumeDecreaseModeValue intValue] == 0) [[[[[[%c(SBMediaController) sharedInstance] valueForKey:@"_routingController"] pickedRoute] logicalLeaderOutputDevice] valueForKey:@"_avOutputDevice"] setCurrentBluetoothListeningMode:@"AVOutputDeviceBluetoothListeningModeAudioTransparency"];
 		else if ([volumeDecreaseModeValue intValue] == 1) [[[[[[%c(SBMediaController) sharedInstance] valueForKey:@"_routingController"] pickedRoute] logicalLeaderOutputDevice] valueForKey:@"_avOutputDevice"] setCurrentBluetoothListeningMode:@"AVOutputDeviceBluetoothListeningModeNormal"];
 		else if ([volumeDecreaseModeValue intValue] == 2) [[[[[[%c(SBMediaController) sharedInstance] valueForKey:@"_routingController"] pickedRoute] logicalLeaderOutputDevice] valueForKey:@"_avOutputDevice"] setCurrentBluetoothListeningMode:@"AVOutputDeviceBluetoothListeningModeActiveNoiseCancellation"];
 	}
-
-	if (pauseAtZeroVolumeSwitch && [self _effectiveVolume] < 0.1 && ![[%c(SBMediaController) sharedInstance] isPaused])
-		[[%c(SBMediaController) sharedInstance] pauseForEventSource:0];
 
 }
 
@@ -42,7 +36,7 @@
 
 %hook TUCall
 
-- (int)status { // change mode when in a call or call ended
+- (int)status { // change listening mode when a call connected or a call ended
 
 	if (!callControlSwitch) return %orig;
 
@@ -70,7 +64,7 @@
 
 %hook SBMediaController
 
-- (void)_mediaRemoteNowPlayingApplicationIsPlayingDidChange:(id)arg1 { // change mode when is playing changed
+- (void)_mediaRemoteNowPlayingApplicationIsPlayingDidChange:(id)arg1 { // change listening mode when is playing changed
 
 	%orig;
 
@@ -93,6 +87,30 @@
 
 %end
 
+%group CrystalMiscellaneous
+
+%hook SBVolumeControl
+
+- (void)increaseVolume { // resume music when volume is above set threshold
+
+	%orig;
+
+	if (pauseAtZeroVolumeSwitch && [self _effectiveVolume] < 0.1 && [[%c(SBMediaController) sharedInstance] isPaused]) [[%c(SBMediaController) sharedInstance] playForEventSource:0];
+
+}
+
+- (void)decreaseVolume { // pause music when volume is below set threshold
+
+	%orig;
+
+	if (pauseAtZeroVolumeSwitch && [self _effectiveVolume] < 0.1 && ![[%c(SBMediaController) sharedInstance] isPaused]) [[%c(SBMediaController) sharedInstance] pauseForEventSource:0];
+
+}
+
+%end
+
+%end
+
 %ctor {
 
 	preferences = [[HBPreferences alloc] initWithIdentifier:@"love.litten.crystalpreferences"];
@@ -106,7 +124,6 @@
 		[preferences registerObject:&volumeThresholdValue default:@"0.3" forKey:@"volumeThreshold"];
 		[preferences registerObject:&volumeDecreaseModeValue default:@"0" forKey:@"volumeDecreaseMode"];
 		[preferences registerObject:&volumeIncreaseModeValue default:@"2" forKey:@"volumeIncreaseMode"];
-		[preferences registerBool:&pauseAtZeroVolumeSwitch default:YES forKey:@"pauseAtZeroVolume"];
 		%init(CrystalVolume);
 	}
 	
@@ -125,5 +142,8 @@
 		[preferences registerObject:&pausedModeValue default:@"0" forKey:@"pausedMode"];
 		%init(CrystalMusic);
 	}
+
+	[preferences registerBool:&pauseAtZeroVolumeSwitch default:YES forKey:@"pauseAtZeroVolume"];
+	if (pauseAtZeroVolumeSwitch) %init(CrystalMiscellaneous);
 
 }
