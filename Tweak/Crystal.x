@@ -91,19 +91,19 @@
 
 %hook SBVolumeControl
 
-- (void)increaseVolume { // resume music when volume is above set threshold
+- (void)increaseVolume { // resume music when volume is above 0
 
 	%orig;
 
-	if (pauseAtZeroVolumeSwitch && [self _effectiveVolume] < 0.1 && [[%c(SBMediaController) sharedInstance] isPaused]) [[%c(SBMediaController) sharedInstance] playForEventSource:0];
+	if ([self _effectiveVolume] < 0.1 && [[%c(SBMediaController) sharedInstance] isPaused]) [[%c(SBMediaController) sharedInstance] playForEventSource:0];
 
 }
 
-- (void)decreaseVolume { // pause music when volume is below set threshold
+- (void)decreaseVolume { // pause music when volume is 0
 
 	%orig;
 
-	if (pauseAtZeroVolumeSwitch && [self _effectiveVolume] < 0.1 && ![[%c(SBMediaController) sharedInstance] isPaused]) [[%c(SBMediaController) sharedInstance] pauseForEventSource:0];
+	if ([self _effectiveVolume] < 0.1 && ![[%c(SBMediaController) sharedInstance] isPaused]) [[%c(SBMediaController) sharedInstance] pauseForEventSource:0];
 
 }
 
