@@ -358,7 +358,7 @@
 			<key>icon</key>
 			<string>featured/SafariWallpaper.png</string>
 			<key>url</key>
-			<string>https://repo.litten.love/depictions/saw/</string>
+			<string>https://repo.litten.love/depictions/SafariWallpaper/</string>
 		</dict>
 		<dict>
 			<key>cellClass</key>
@@ -370,7 +370,7 @@
 			<key>icon</key>
 			<string>featured/Copypasta.png</string>
 			<key>url</key>
-			<string>https://repo.litten.love/depictions/cpa/</string>
+			<string>https://repo.litten.love/depictions/Copypasta/</string>
 		</dict>
 
 		<dict>
