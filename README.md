@@ -1,4 +1,4 @@
-# Crystal
+# Crystal 💎
 Headphone listening mode automations
 
 ## Installation
